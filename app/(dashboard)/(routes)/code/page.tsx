@@ -19,8 +19,10 @@ import { cn } from "@/lib/utils";
 import UserAvatar from "@/components/UserAvatar";
 import BotAvatar from "@/components/BotAvatar";
 import ReactMarkdown from "react-markdown";
+import { useProModal } from "@/hooks/user-pro-model";
 
 const CodePage = () => {
+  const proModal = useProModal();
   const router = useRouter();
   const [messages, setMessages] = useState<ChatCompletionMessageParam[]>([]);
 
@@ -49,7 +51,9 @@ const CodePage = () => {
 
       form.reset(); // it will clear input after submiting prompt
     } catch (error: any) {
-      console.log(error);
+      if (error?.response?.status === 403) {
+        proModal.onOpen();
+      }
     } finally {
       router.refresh();
     }

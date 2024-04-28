@@ -14,8 +14,10 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Empty from "@/components/Empty";
 import Loader from "@/components/Loader";
+import { useProModal } from "@/hooks/user-pro-model";
 
 const VideoPage = () => {
+  const proModal = useProModal();
   const router = useRouter();
   const [video, setVideo] = useState<string>();
 
@@ -38,7 +40,9 @@ const VideoPage = () => {
 
       form.reset(); // it will clear input after submiting prompt
     } catch (error: any) {
-      console.log(error);
+      if (error?.response?.status === 403) {
+        proModal.onOpen();
+      }
     } finally {
       router.refresh();
     }

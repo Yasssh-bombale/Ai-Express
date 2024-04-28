@@ -18,8 +18,10 @@ import Loader from "@/components/Loader";
 import { cn } from "@/lib/utils";
 import UserAvatar from "@/components/UserAvatar";
 import BotAvatar from "@/components/BotAvatar";
+import { useProModal } from "@/hooks/user-pro-model";
 
 const Conversation = () => {
+  const proModal = useProModal(); //upgrade pro modal hook
   const router = useRouter();
   const [messages, setMessages] = useState<ChatCompletionMessageParam[]>([]);
 
@@ -48,7 +50,10 @@ const Conversation = () => {
 
       form.reset(); // it will clear input after submiting prompt
     } catch (error: any) {
-      console.log(error);
+      if (error?.response?.status === 403) {
+        //opening Pro modal when encountered with 403 statusCode which will throw when user has exceeded their free tier
+        proModal.onOpen();
+      }
     } finally {
       router.refresh();
     }
