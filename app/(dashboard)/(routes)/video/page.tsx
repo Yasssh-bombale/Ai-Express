@@ -96,7 +96,7 @@ const VideoPage = () => {
           )}
 
           {!video && !isLoading && (
-            <Empty label="No music generation started" />
+            <Empty label="No video generation started" />
           )}
           {video && (
             <video

@@ -23,10 +23,6 @@ const Conversation = () => {
   const router = useRouter();
   const [messages, setMessages] = useState<ChatCompletionMessageParam[]>([]);
 
-  console.log(process.env.NEXT_PUBLIC_OPENAI_PARIK_APIKEY);
-
-  console.log(messages);
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
