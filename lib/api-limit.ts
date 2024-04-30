@@ -1,6 +1,7 @@
 import { auth } from "@clerk/nextjs";
 import { MAX_FREE_COUNTS } from "@/constant";
 import UserApiLimit from "@/models/User";
+import dbConnection from "./dbConnection";
 
 export const increaseApiCount = async () => {
   const { userId } = auth();
@@ -51,6 +52,7 @@ export const getApiLimitCount = async () => {
     if (!userId) {
       return 0;
     }
+    await dbConnection();
 
     const userApiLimit = await UserApiLimit.findOne({
       userId,
