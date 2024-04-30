@@ -52,6 +52,7 @@ const CodePage = () => {
       form.reset(); // it will clear input after submiting prompt
     } catch (error: any) {
       if (error?.response?.status === 403) {
+        //opening Pro modal when encountered with 403 statusCode which will throw when user has exceeded their free tier
         proModal.onOpen();
       }
     } finally {

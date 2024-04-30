@@ -1,5 +1,6 @@
 import { checkApiLimit, increaseApiCount } from "@/lib/api-limit";
 import dbConnection from "@/lib/dbConnection";
+import { checkSubscription } from "@/lib/subscription";
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 import Replicate from "replicate";
@@ -25,8 +26,10 @@ export async function POST(req: Request) {
     await dbConnection();
 
     const freeTrial = await checkApiLimit();
-    if (!freeTrial) {
-      return new NextResponse("Your free trial has expired", { status: 403 });
+    const isPro = await checkSubscription();
+
+    if (!freeTrial && !isPro) {
+      return new NextResponse("Free trial has expired", { status: 403 });
     }
     const input = {
       fps: 24,
@@ -42,7 +45,11 @@ export async function POST(req: Request) {
       "anotherjesse/zeroscope-v2-xl:9f747673945c62801b13b84701c783929c0ee784e4748ec062204894dda1a351",
       { input }
     );
-    await increaseApiCount();
+
+    if (!isPro) {
+      await increaseApiCount();
+    }
+
     return NextResponse.json(response);
   } catch (error) {
     console.log("[VIDEO_ERROR]", error);

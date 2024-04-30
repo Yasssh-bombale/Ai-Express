@@ -1,5 +1,6 @@
 import { checkApiLimit, increaseApiCount } from "@/lib/api-limit";
 import dbConnection from "@/lib/dbConnection";
+import { checkSubscription } from "@/lib/subscription";
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 import { OpenAI } from "openai";
@@ -37,8 +38,10 @@ export async function POST(req: Request) {
     await dbConnection();
 
     const freeTrial = await checkApiLimit();
-    if (!freeTrial) {
-      return new NextResponse("Your free trial has expired", { status: 403 });
+    const isPro = await checkSubscription();
+
+    if (!freeTrial && !isPro) {
+      return new NextResponse("Free trial has expired", { status: 403 });
     }
 
     const response = await openai.images.generate({
@@ -48,7 +51,9 @@ export async function POST(req: Request) {
       size: "1024x1024",
     });
 
-    await increaseApiCount();
+    if (!isPro) {
+      await increaseApiCount();
+    }
 
     return NextResponse.json(response.data);
   } catch (error) {

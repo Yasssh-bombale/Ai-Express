@@ -1,5 +1,6 @@
 import { checkApiLimit, increaseApiCount } from "@/lib/api-limit";
 import dbConnection from "@/lib/dbConnection";
+import { checkSubscription } from "@/lib/subscription";
 
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
@@ -33,7 +34,9 @@ export async function POST(req: Request) {
     // check is free trial or not;
     await dbConnection();
     const freeTrial = await checkApiLimit();
-    if (!freeTrial) {
+    const isPro = await checkSubscription();
+
+    if (!freeTrial && !isPro) {
       return new NextResponse("Free trial has expired", { status: 403 });
     }
 
@@ -41,8 +44,9 @@ export async function POST(req: Request) {
       model: "gpt-3.5-turbo",
       messages,
     });
-
-    await increaseApiCount(); //increasing API Count;
+    if (!isPro) {
+      await increaseApiCount(); //increasing API Count;
+    }
 
     return NextResponse.json(response.choices[0].message);
   } catch (error) {

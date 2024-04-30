@@ -1,5 +1,6 @@
 import { checkApiLimit, increaseApiCount } from "@/lib/api-limit";
 import dbConnection from "@/lib/dbConnection";
+import { checkSubscription } from "@/lib/subscription";
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 import Replicate from "replicate";
@@ -25,8 +26,10 @@ export async function POST(req: Request) {
     await dbConnection();
 
     const freeTrial = await checkApiLimit();
-    if (!freeTrial) {
-      return new NextResponse("Your free trial has expired", { status: 403 });
+    const isPro = await checkSubscription();
+
+    if (!freeTrial && !isPro) {
+      return new NextResponse("Free trial has expired", { status: 403 });
     }
 
     const input = {
@@ -38,7 +41,9 @@ export async function POST(req: Request) {
       { input }
     );
 
-    await increaseApiCount(); //increasing apiCount;
+    if (!isPro) {
+      await increaseApiCount(); //increasing apiCount;
+    }
 
     return NextResponse.json(response);
   } catch (error) {
