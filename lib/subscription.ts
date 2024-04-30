@@ -28,6 +28,5 @@ export const checkSubscription = async () => {
     return !!isValid;
   } catch (error) {
     console.log(`ERROR_IN_CHECKSUBSCRIPTION ${error}`);
-    return new NextResponse("ERROR_IN_CHECK_SUBSCRIPTION", { status: 500 });
   }
 };
