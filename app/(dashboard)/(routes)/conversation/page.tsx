@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils";
 import UserAvatar from "@/components/UserAvatar";
 import BotAvatar from "@/components/BotAvatar";
 import { useProModal } from "@/hooks/user-pro-model";
+import toast from "react-hot-toast";
 
 const Conversation = () => {
   const proModal = useProModal(); //upgrade pro modal hook
@@ -50,9 +51,12 @@ const Conversation = () => {
 
       form.reset(); // it will clear input after submiting prompt
     } catch (error: any) {
+      console.log(`Error in client conversation page ${error}`);
       if (error?.response?.status === 403) {
         //opening Pro modal when encountered with 403 statusCode which will throw when user has exceeded their free tier
         proModal.onOpen();
+      } else {
+        toast.error("Something went wrong");
       }
     } finally {
       router.refresh();
