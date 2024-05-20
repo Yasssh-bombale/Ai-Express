@@ -6,6 +6,9 @@ import { NextResponse } from "next/server";
 import { OpenAI } from "openai";
 import { ChatCompletionMessageParam } from "openai/resources/chat/completions";
 
+export const maxDuration = 50;
+export const dynamic = "force-dynamic";
+
 const openai = new OpenAI({
   apiKey: process.env.NEXT_PUBLIC_OPENAI_PARIK_APIKEY,
 });

@@ -5,6 +5,9 @@ import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 import Replicate from "replicate";
 
+export const maxDuration = 50;
+export const dynamic = "force-dynamic";
+
 const replicate = new Replicate({
   auth: process.env.NEXT_PUBLIC_REPLICATE_KEY,
 });

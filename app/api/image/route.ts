@@ -5,7 +5,7 @@ import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 import { OpenAI } from "openai";
 
-export const maxDuration = 30;
+export const maxDuration = 50;
 export const dynamic = "force-dynamic";
 
 const openai = new OpenAI({
